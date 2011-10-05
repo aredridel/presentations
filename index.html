@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
   
   <!--[if lt IE 9]>
   <script src="lib/html5shim.js"></script>
   <![endif]-->  
   
   <!-- These are some core styles the slideshow app requires -->
-  <link rel="stylesheet" href="lib/styles.css" />
+  <link rel="stylesheet" href="lib/styles.css">
   
   <!-- These are the styles you'll add to make the slides look great -->
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/styles.css">
+
+  <link rel='stylesheet' href='lib/syntaxhighlighter/styles/shCore.css'>
+  <link rel='stylesheet' href='lib/syntaxhighlighter/styles/shThemeDefault.css'>
   
-  <title>Example Slideshow</title>
+  <title>Controlling Complexity</title>
 </head>
 <body>
   <header>
-    <h1>Example Slide Show</h1>
+    <h1>Controlling Complexity in the API</h1>
     <nav>
       <ul>
         <li><button id="prev-btn" title="Previous slide">Previous Slide</button></li>
@@ -31,84 +34,48 @@
     <!-- Begin slides -->
     <section>
       <hgroup>
-        <h1>Hello, interwebs explorer.</h1>
-        <h2>How to use this thing</h2>
+        <h1>Controlling Complexity</h1>
+        <h2>(In the API)</h2>
       </hgroup>
-      <p>Press the right arrow, down arrow, or spacebar to advance; press the left arrow or up arrow to move backward.</p>
-  		<p>You can also click the left and right arrows in the control bar at the top.</p>
     </section>
-    <section>
-      <hgroup>
-        <h1>Intraslide animation</h1>
-        <h2>I'm calling these "actions"</h2>
-      </hgroup>
-        <p>You can hide/reveal content within the slides by giving something a class of "action". Actions are revealed in the order in which they occur in the HTML. Advancing to the next slide will first reveal actions on the page if they exist.</p>
-  	  <pre>
-&lt;p class=&quot;action&quot;&gt;This will be hidden when the slide loads&lt;/p&gt;
-  	  </pre>	
-      <ul>
-        <li class="action">Bullet point</li>
-        <li class="action">Another bullet point</li>
-        <li class="action">Yet another bullet point</li>
-        <li class="action">You get the idea</li>
-      </ul>
-    </section>
-    <section>
-      <hgroup>
-        <h1>Custom events</h1>
-        <h2>These may or may not be useful for you</h2>
-      </hgroup>
-      <p>When a new slide is loaded, a "newSlide" event is fired. (Take a look at your console.)</p>
-  		<p>There's also an event triggered when a new "action" is revealed.</p>
-  		<pre>
-//Example usage
-$(&#x27;html&#x27;).bind(&#x27;newSlide&#x27;, function(e,id) { console.log(id) });
-  		</pre>
-    </section>
-  	<section>
-      <hgroup>
-        <h1>Building slides</h1>
-        <h2>It's easy</h2>
-      </hgroup>
-      <p>Each slide goes within a <code>section</code> element, like this:</p>
-  		<pre>
-&lt;section&gt;
-    &lt;hgroup&gt;
-        &lt;h1&gt;Your heading&lt;/h1&gt;
-        &lt;h2&gt;Your subheading&lt;/h2&gt;
-    &lt;/hgroup&gt;
-    &lt;p&gt;All your slide content...&lt;/p&gt;
-&lt;/section&gt;
-  		</pre>
-  	  <p>You don't have to worry about numbering the slides. The script will count the number of <code>section</code> elements and give each one a numbered ID on page load.</p>
-    </section>
-  	<section>
-      <hgroup>
-        <h1>Plays well with images</h1>
-      </hgroup>
 
-      <img src="images/best-stegosaurus.png" alt="The Best Dinosaur" />
-      
-    </section>    
     <section>
       <hgroup>
-        <h1>Other details</h1>
-        <h2>Small stuff</h2>
+        <h1>What is complexity?</h1>
       </hgroup>
-  		<p>The hash updates with each slide.</p>
-  		<p>The slideshow itself has 3 dependencies: jQuery, htmlSlides.js, and a small stylesheet.</p>
-  		<p>The slide script has one option, the option to hide the toolbar at the top:</p>
-  		<pre>
-htmlSlides.init({ toolbar: true });
-  		</pre>
+      <p>The natural result of organically grown systems</p>
+      <p>Interconnectedness.</p>
+      <p>Mushrooms</p>
+
     </section>
-  	<section>
-      <hgroup>
-        <h1>That's all</h1>
-      </hgroup>
-      <p>Get it at <a href="http://github.com/robflaherty/html-slideshow">github</a>.</p>
-      <p>- Rob Flaherty / <a href="http://twitter.com/robflaherty">@robflaherty</a> / <a href="mailto:rob@ravelrumba.com">rob@ravelrumba.com</a></p>
+
+    <section>
+      <h1>Mushrooms?!</h1>
+      <p>Yes. Mushrooms.</p>
+      <p><img src='http://dinhe.net/~aredridel/2005/08/21-blue-lakes-hike/img_4068.jpg' style='width: 40%'></p>
+      <div class='action'>
+          <p>Tasty</p>
+          <p>Poisonous if it's the wrong kind</p>
+          <p>Grows on rotting stuff</p>
+          <p>Actually grows beneath the surface, popping up just when it's ripe</p>
+      </div>
     </section>
+
+    <section>
+      <h1>An example</h1>
+      <div class='action'>
+        <script type='syntaxhighlighter' class="brush: php">
+            <?php
+                class User {
+                    function getName() { ... }
+                    function getAddress() { ... }
+                    function getMap() { ... }
+                }
+            ?>
+        </script>
+      </div>
+    </section>
+
     <!-- /End slides -->
     
   </div>
@@ -116,6 +83,9 @@ htmlSlides.init({ toolbar: true });
   <script src="lib/jquery-1.6.4.min.js"></script>
   <script src="lib/jquery.jswipe-0.1.2.js"></script>  
   <script src="lib/htmlSlides.js"></script>
+  <script src="lib/syntaxhighlighter/scripts/shCore.js"></script>
+  <script src="lib/syntaxhighlighter/scripts/shBrushJScript.js"></script>
+  <script src="lib/syntaxhighlighter/scripts/shBrushPHP.js"></script>
   <script>
     //Do our business when the DOM is ready for us
     $(function() {
@@ -134,6 +104,8 @@ htmlSlides.init({ toolbar: true });
 
       //One little option: hideToolbar (boolean; default = false)
       htmlSlides.init({ hideToolbar: true });
+
+      SyntaxHighlighter.all()
       
     });
   </script>
