@@ -65,17 +65,160 @@
       <h1>An example</h1>
       <div class='action'>
         <script type='syntaxhighlighter' class="brush: php">
-            <?php
-                class User {
-                    function getName() { ... }
-                    function getAddress() { ... }
-                    function getMap() { ... }
-                }
-            ?>
+          class User {
+             function getName() { ... }
+             function getAddress() { ... }
+             function getMap() { ... }
+          }
         </script>
       </div>
     </section>
 
+    <section>
+      <h1>An example</h1>
+      <script type='syntaxhighlighter' class="brush: php">
+        class User {
+            static function loadFromDatabase($id) { ... }
+            function saveToDatabase() { ... }
+            function getName() { ... }
+            function getAddress() { ... }
+            function getMap() { ... }
+        }
+      </script>
+    </section>
+
+    <section>
+      <h1>An example</h1>
+      <script type='syntaxhighlighter' class="brush: php">
+          class User {
+              static function loadFromDatabase($id) { ... }
+              function saveToDatabase() { some conversion }
+              function saveToMemcache() { ... }
+              function getName() { ... }
+              function setName() { validation here }
+              function setNameByAdmin() { not validating here }
+              function getAddress() { some formatting logic }
+              function getMap() { ... }
+          }
+      </script>
+      <div class='action'>
+        <p>Mushrooms.</p>
+        <p> If you never have to care what's in those methods, great...</p>
+        <p>... but you do have to reason about the system as a whole</p>
+      </div>
+    </section>
+
+    <section>
+      <h1>Granularity</h1>
+      <h2>Do you operate on a given type of object field-by-field?</h2>
+      <script type='syntaxhighlighter' class="brush: php">
+          class User {
+              static function loadForDisplay($id) { ... }
+              static function loadForEdit($id) { ... }
+              function setName($name) { update the database }
+              function setAddress($address) { update the database }
+          }
+      </script>
+      <p>Lots of micro-optimizations. Small mutations are the key actions.</p>
+      <div class='action'>
+        <h2>Or do you operate on it as a whole?</h2>
+        <script type='syntaxhighlighter' class="brush: php">
+            class User {
+                static function load($id) { ... }
+                function validate() { ... }
+                function save() { update the database just once }
+            }
+        </script>
+        <p>Bigger pieces. You work with the whole thing all at once.</p>
+      </div>
+    </section>
+
+    <section>
+      <h1>Granularity</h1>
+      <h2>Field-by-field</h2>
+      <script type='syntaxhighlighter' class="brush: php">
+        try {
+          $user->setName('bob');
+        } catch (validationException $e) {
+          ... 
+        }
+      </script>
+
+      <h2>Whole object</h2>
+      <script type='syntaxhighlighter' class="brush: php">
+        $user->name = 'bob';
+        if (!$user->validate()) { ... }
+      </script>
+    </section>
+
+    <section>
+      <h1>Granularity</h1>
+      <h2>Field-by-field</h2>
+      <script type='syntaxhighlighter' class="brush: php">
+        try {
+          $user->setName('bob');
+        } catch (validationException $e) {
+          ... 
+        }
+
+        try {
+          $user->setAddress('123 Main St.');
+        } catch (validationException $e) {
+          ... 
+        }
+      </script>
+
+      <h2>Whole object</h2>
+      <script type='syntaxhighlighter' class="brush: php">
+        $user->name = 'bob';
+        $user->address = '123 Main St';
+        if (!$user->validate()) { ... }
+      </script>
+    </section>
+
+    <section>
+      <h1>Representation</h1>
+      <h2>Field-by-field</h2>
+      <script type='syntaxhighlighter' class="brush: php">
+        function toJSON() {
+          return json_encode(array('name' => $this->getName(), 'address' => $this->getAddress()));
+        }
+      </script>
+      <p>Everything in the object is locked up tight. Everything takes explicit conversion.</p>
+
+      <h2>Whole object</h2>
+      <script type='syntaxhighlighter' class="brush: php">
+        function toJSON() {
+          return json_encode($this);
+        }
+      </script>
+      <p>We're working with the canonical representation.</p>
+    </section>
+
+    <section>
+      <h1>Representation</h1>
+      <h2>Field-by-field</h2>
+      <script type='syntaxhighlighter' class="brush: php">
+        function loadFromDatabase($row) {
+          $this->setNameNoValidate($row['name']);
+          $this->setAddressNoValidate($row['address']);
+        }
+      </script>
+      <p>You have to extend the API to handle invalid data. What you've got inside your object is (assuming no bugs) good, but now you have to do validation before you put data in.</p>
+
+      <h2>Whole object</h2>
+      <script type='syntaxhighlighter' class="brush: php">
+        function loadFromDatabase($row) {
+          foreach($row as $key => $value) {
+            $this->$key = $value;
+          }
+        }
+      </script>
+      <p>You can actually load invalid data and work with it in its own domain. No need to have an intermediate representation for not-yet-validated data.</p>
+      <script type='syntaxhighlighter' class="brush: php">
+        if($user->validate()) { ... }
+      </script>
+    </section>
     <!-- /End slides -->
     
   </div>
@@ -90,18 +233,6 @@
     //Do our business when the DOM is ready for us
     $(function() {
       
-      //You can trigger Javascript based on the slide number like this:
-      $('html').bind('newSlide', function(e, id) { 
-        switch(id) {
-          case 2:
-            console.log('This is the second slide.');;
-            break;
-          case 3:
-            console.log('Hello, third slide.');
-            break;
-        }
-      });
-
       //One little option: hideToolbar (boolean; default = false)
       htmlSlides.init({ hideToolbar: true });
 
