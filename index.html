@@ -29,16 +29,21 @@
       </ul>
     </nav>
   </header>
+  <!-- {{{ deck -->
   <div id="deck">
     
-    <!-- Begin slides -->
+    <!-- {{{ slides -->
+
+    <!-- {{{ title -->
     <section>
       <hgroup>
         <h1>Controlling Complexity</h1>
         <h2>(In the API)</h2>
       </hgroup>
     </section>
+    <!-- }}} -->
 
+    <!-- {{{ introduction -->
     <section>
       <hgroup>
         <h1>What is complexity?</h1>
@@ -107,7 +112,9 @@
         <p>... but you do have to reason about the system as a whole</p>
       </div>
     </section>
+    <!-- }}} -->
 
+    <!-- {{{ granularity -->
     <section>
       <h1>Granularity</h1>
       <h2>Do you operate on a given type of object field-by-field?</h2>
@@ -176,6 +183,9 @@
       </script>
     </section>
 
+    <!-- }}} -->
+
+    <!-- {{{ representation -->
     <section>
       <h1>Representation</h1>
       <h2>Field-by-field</h2>
@@ -219,10 +229,95 @@
         if($user->validate()) { ... }
       </script>
     </section>
-    <!-- /End slides -->
+
+    <!-- }}} -->
+
+    <!-- {{{ lifecycle -->
+    <section>
+        <h1>Lifecycle</h1>
+        <p>Does our User object last milliseconds? Hours? Days?</p>
+        <p>In PHP, the answer is almost always 'milliseconds'. The entire object structure is torn down for each request. All state saved must be explicit.</p>
+        <p>In a system like a router's firmware, where the same code will have long-lived instances for objects like route table entries, the lifecycle is very different. Objects may live for years. Those are state objects, and any change to their internal representation affects the system as a whole.</p>
+    </section>
+    <!-- }}} -->
+
+    <!-- {{{ state -->
+    <section>
+    <h1>State Transitions</h1>
+    <p>Bugs happen any place the state of the system can change.</p>
+    <p>To reduce the amount of code that has to be analyzed to see a change's effect, we define points where the state can change, and enforce those.</p>
+    <p>In our user object example, the system as a whole is affected only when the object is persisted. Our PHP doesn't talk much to external systems.</p>
+    </section>
+
+    <section>
+      <h1> State Transitions</h1>
+      <script type='syntaxhighlighter' class="brush: php">
+          class User {
+              static function loadFromDatabase($id) { ... }
+              function saveToDatabase() { some conversion }
+              function saveToMemcache() { ... }
+              function getName() { ... }
+              function setName() { validation here }
+              function setNameByAdmin() { not validating here }
+              function getAddress() { some formatting logic }
+              function getMap() { ... }
+          }
+      </script>
+
+      <p>State changes in line 3. And 4. And 6. And 7. And maybe in 8. Line 8 looks like a fantastic place to update our stored copy if we discover it's in an old format.</p>
+
+      <p class='action'>There be dragons.</p>
+    </section>
+
+    <section>
+      <h1>State Transitions</h1>
+      <script type='syntaxhighlighter' class="brush: php">
+          class User {
+              public var $name;
+              public var $address;
+              function validate() { ... }
+              function save() { ... }
+          }
+      </script>
+
+      <p>State changes only when we save the object.</p>
+    </section>
+
+    <section>
+      <h1>But how are you sure?</h1>
+      <p>If this were Erlang, we'd match only valid objects. If this were OCaml, validated objects would be a different type, and we could declare that most of our functions only work with the persisted, validated state.</p>
+      <p>This is PHP. We'll have to assert things are in the right state.</p>
+      <script type='syntaxhighlighter' class="brush: php">
+        function frobnicateWithMyUser($user) {
+          assert('$user->getName()');
+          assert('$user->getAddress()');
+          assert('... the list goes on ...');
+
+          // I sure hope I didn't miss one. I hope someone changing this 
+          // code didn't add a new one elsewhere.
+
+          // I can't be sure. I'll add more validation here.
+        }
+      </script>
+      <div class='action'>
+        <script type='syntaxhighlighter' class="brush: php">
+          function frobnicateWithMyUser($user) {
+            assert('$user->validate()');
+
+            // This function is extra picky. I'll go add more validation 
+            // in the user's validate method.
+          }
+        </script>
+        <p>The state we really care about is "is it valid?". That's it. Better to define that in one place.</p>
+      </div>
+    </section>
+
+    <!-- }}} -->
+
+    <!-- }}} -->
     
   </div>
-  <!-- /deck -->
+  <!-- }}} -->
   <script src="lib/jquery-1.6.4.min.js"></script>
   <script src="lib/jquery.jswipe-0.1.2.js"></script>  
   <script src="lib/htmlSlides.js"></script>
